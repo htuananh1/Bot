@@ -1,26 +1,26 @@
 version: '3.8'
 
 services:
-  telegram-bot:
+  discord-bot:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: telegram-game-bot
+    container_name: discord-game-bot
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
       - DATA_PATH=/app/data/users.json
-      - WEBHOOK_ENABLED=${WEBHOOK_ENABLED:-false}
-      - WEBHOOK_URL=${WEBHOOK_URL:-}
-      - WEBHOOK_PORT=${WEBHOOK_PORT:-8443}
+      - WEBHOOK_PORT=${WEBHOOK_PORT:-8080}
+      - WEBHOOK_PATH=${WEBHOOK_PATH:-/discord-webhook}
+      - COMMAND_PREFIX=${COMMAND_PREFIX:-!}
       - AI_GATEWAY_API_KEY=${AI_GATEWAY_API_KEY:-}
     volumes:
       - ./data:/app/data
     ports:
-      - "${WEBHOOK_PORT:-8443}:${WEBHOOK_PORT:-8443}"
-      - "8080:8080"
+      - "${WEBHOOK_PORT:-8080}:${WEBHOOK_PORT:-8080}"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health').read()"]
       interval: 30s

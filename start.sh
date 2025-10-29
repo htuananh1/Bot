@@ -21,9 +21,9 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
-# Check if TELEGRAM_TOKEN is set
-if ! grep -q "TELEGRAM_TOKEN=.*[^example]" .env; then
-    echo "⚠️  TELEGRAM_TOKEN chưa được cấu hình!"
+# Check if DISCORD_TOKEN is set
+if ! grep -q "DISCORD_TOKEN=.*[^example]" .env; then
+    echo "⚠️  DISCORD_TOKEN chưa được cấu hình!"
     echo "📝 Vui lòng chỉnh sửa file .env và thêm token của bạn:"
     echo "   nano .env"
     exit 1

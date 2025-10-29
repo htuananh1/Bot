@@ -1,27 +1,27 @@
 services:
   - type: web
-    name: telegram-game-bot
+    name: discord-game-bot
     env: docker
     dockerfilePath: ./Dockerfile
     plan: free
     region: singapore
     envVars:
-      - key: TELEGRAM_TOKEN
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: DISCORD_WEBHOOK_URL
         sync: false
       - key: AI_GATEWAY_API_KEY
         sync: false
       - key: DATA_PATH
         value: /app/data/users.json
-      - key: WEBHOOK_ENABLED
-        value: "true"
       - key: WEBHOOK_PORT
-        value: "8443"
+        value: "8080"
       - key: WEBHOOK_PATH
-        value: /webhook
-      - key: WEBHOOK_URL
-        sync: false
+        value: /discord-webhook
+      - key: COMMAND_PREFIX
+        value: "!"
     disk:
-      name: telegram-bot-data
+      name: discord-bot-data
       mountPath: /app/data
       sizeGB: 1
     healthCheckPath: /health

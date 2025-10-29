@@ -1,4 +1,4 @@
-"""Runtime configuration utilities for the Telegram bot."""
+"""Runtime configuration utilities for the Discord bot."""
 
 from __future__ import annotations
 
@@ -14,41 +14,35 @@ class ConfigError(RuntimeError):
 class BotConfig:
     """Container for runtime configuration values."""
 
-    token: str
+    discord_token: str
+    discord_webhook_url: str = ""
     data_path: str = "bot/data/users.json"
-    webhook_enabled: bool = False
-    webhook_url: str = ""
-    webhook_port: int = 8443
-    webhook_path: str = "/webhook"
+    webhook_port: int = 8080
+    webhook_path: str = "/discord-webhook"
+    command_prefix: str = "!"
 
 
 def load_config() -> BotConfig:
     """Load configuration from environment variables."""
 
-    token = os.getenv("TELEGRAM_TOKEN")
-    if not token:
+    discord_token = os.getenv("DISCORD_TOKEN")
+    if not discord_token:
         raise ConfigError(
-            "Missing TELEGRAM_TOKEN environment variable. "
-            "Set it to your bot token before running the bot."
+            "Missing DISCORD_TOKEN environment variable. "
+            "Set it to your Discord bot token before running."
         )
 
+    discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL", "")
     data_path = os.getenv("DATA_PATH", "bot/data/users.json")
-    webhook_enabled = os.getenv("WEBHOOK_ENABLED", "false").lower() in ("true", "1", "yes")
-    webhook_url = os.getenv("WEBHOOK_URL", "")
-    webhook_port = int(os.getenv("WEBHOOK_PORT", "8443"))
-    webhook_path = os.getenv("WEBHOOK_PATH", "/webhook")
-    
-    if webhook_enabled and not webhook_url:
-        raise ConfigError(
-            "WEBHOOK_ENABLED is true but WEBHOOK_URL is not set. "
-            "Please provide the full webhook URL (e.g., https://yourdomain.com)."
-        )
+    webhook_port = int(os.getenv("WEBHOOK_PORT", "8080"))
+    webhook_path = os.getenv("WEBHOOK_PATH", "/discord-webhook")
+    command_prefix = os.getenv("COMMAND_PREFIX", "!")
     
     return BotConfig(
-        token=token,
+        discord_token=discord_token,
+        discord_webhook_url=discord_webhook_url,
         data_path=data_path,
-        webhook_enabled=webhook_enabled,
-        webhook_url=webhook_url,
         webhook_port=webhook_port,
         webhook_path=webhook_path,
+        command_prefix=command_prefix,
     )

@@ -1,4 +1,4 @@
-# ⚡ Quick Start Guide
+# ⚡ Quick Start Guide - Discord Game Bot
 
 Hướng dẫn nhanh để chạy bot trong 5 phút!
 
@@ -6,14 +6,28 @@ Hướng dẫn nhanh để chạy bot trong 5 phút!
 
 ### Yêu cầu
 - Docker và Docker Compose đã cài đặt
-- Bot token từ [@BotFather](https://t.me/BotFather)
+- Discord Bot Token
 
-### Các bước
+### Tạo Discord Bot
+
+1. Truy cập [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **"New Application"** → Đặt tên bot
+3. Vào tab **"Bot"** → Click **"Add Bot"**
+4. Copy **Bot Token** (giữ kỹ, chỉ hiện 1 lần!)
+5. Bật **Privileged Gateway Intents**:
+   - ✅ **Message Content Intent**
+   - ✅ **Server Members Intent**
+6. Vào tab **"OAuth2"** → **"URL Generator"**
+   - Scopes: Chọn `bot` và `applications.commands`
+   - Bot Permissions: Chọn `Send Messages`, `Read Messages`, `Embed Links`
+   - Copy URL và mở để invite bot vào server
+
+### Các bước chạy bot
 
 1. **Clone repository**
 ```bash
 git clone <repository-url>
-cd telegram-game-bot
+cd discord-game-bot
 ```
 
 2. **Tạo file .env**
@@ -22,33 +36,31 @@ cp .env.example .env
 nano .env  # Hoặc dùng editor bạn thích
 ```
 
-Chỉnh sửa và thêm token của bạn:
+Thêm token:
 ```env
-TELEGRAM_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+DISCORD_TOKEN=your_bot_token_here
 ```
 
 3. **Chạy bot**
 ```bash
-./start.sh
-# Hoặc
 docker-compose up -d
 ```
 
 4. **Kiểm tra**
 ```bash
 # Xem logs
-docker-compose logs -f
+docker-compose logs -f discord-bot
 
 # Kiểm tra health
 curl http://localhost:8080/health
 ```
 
-5. **Thử nghiệm**
-- Mở Telegram
-- Tìm bot của bạn
-- Gửi `/start`
+5. **Thử nghiệm trên Discord**
+- Mở Discord server đã invite bot
+- Gửi `!start` hoặc `!help`
+- Bot sẽ trả lời!
 
-✅ **Xong!** Bot đã sẵn sàng hoạt động!
+✅ **Xong!** Bot đã sẵn sàng!
 
 ---
 
@@ -63,7 +75,7 @@ curl http://localhost:8080/health
 1. **Clone và setup**
 ```bash
 git clone <repository-url>
-cd telegram-game-bot
+cd discord-game-bot
 
 # Tạo virtual environment
 python3 -m venv .venv
@@ -73,7 +85,9 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-2. **Cấu hình**
+2. **Tạo Discord Bot** (như hướng dẫn ở trên)
+
+3. **Cấu hình**
 ```bash
 cp .env.example .env
 nano .env
@@ -81,10 +95,10 @@ nano .env
 
 Thêm token:
 ```env
-TELEGRAM_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+DISCORD_TOKEN=your_bot_token_here
 ```
 
-3. **Chạy**
+4. **Chạy**
 ```bash
 python main.py
 ```
@@ -92,12 +106,11 @@ python main.py
 hoặc
 
 ```bash
+chmod +x start.sh
 ./start.sh
 ```
 
-4. **Thử nghiệm bot**
-- Mở Telegram và tìm bot
-- Gửi `/start` để bắt đầu
+5. **Thử nghiệm bot trên Discord**
 
 ---
 
@@ -105,18 +118,18 @@ hoặc
 
 ### Railway (Dễ nhất)
 
-1. Fork repository này
-2. Truy cập [railway.app](https://railway.app)
-3. Click "New Project" → "Deploy from GitHub"
+1. Fork repository này trên GitHub
+2. Truy cập [railway.app](https://railway.app) và đăng nhập
+3. Click **"New Project"** → **"Deploy from GitHub"**
 4. Chọn repository đã fork
-5. Thêm environment variable:
-   - `TELEGRAM_TOKEN`: Token của bạn
-   - `WEBHOOK_ENABLED`: `true`
-   - `WEBHOOK_URL`: `https://your-app.railway.app` (Railway sẽ cung cấp)
+5. Trong **Variables**, thêm:
+   - Key: `DISCORD_TOKEN`
+   - Value: Token bot của bạn
+6. Click **"Deploy"**
 
-✅ Deploy xong trong < 2 phút!
+✅ Bot sẽ online trong < 2 phút!
 
-### Fly.io (Miễn phí tốt)
+### Fly.io (Free tier tốt)
 
 ```bash
 # Cài đặt Fly CLI
@@ -125,37 +138,81 @@ curl -L https://fly.io/install.sh | sh
 # Login
 fly auth login
 
-# Deploy
+# Deploy (từ thư mục project)
 fly launch --no-deploy
-fly secrets set TELEGRAM_TOKEN=your_token
-fly secrets set WEBHOOK_URL=https://your-app.fly.dev
+
+# Set secrets
+fly secrets set DISCORD_TOKEN=your_token_here
+
+# Deploy
 fly deploy
 ```
 
-✅ Deploy xong trong < 3 phút!
-
-Xem thêm chi tiết trong [DEPLOY.md](DEPLOY.md)
+✅ Bot online trong < 3 phút!
 
 ---
 
 ## 🎮 Sử dụng Bot
 
-### Các lệnh cơ bản
+### Lệnh cơ bản
 
-- `/start` - Bắt đầu sử dụng bot
-- `/help` - Xem danh sách lệnh
-- `/balance` - Xem số dư
-- `/work` - Làm việc kiếm tiền
-- `/daily` - Nhận quà hằng ngày
+```
+!start       - Bắt đầu chơi
+!help        - Xem danh sách lệnh
+!balance     - Xem số dư (alias: !bal, !money)
+```
 
-### Các game
+### Game kiếm tiền
 
-- `/dice` - Chơi xúc xắc may rủi
-- `/slots` - Quay hũ slot machine
-- `/fish` - Chiến dịch câu cá
-- `/mine` - Khai thác mỏ
-- `/wordchain` - Nối từ với AI (cần API key)
-- `/vietking` - Thử thách Vua Tiếng Việt (cần API key)
+```
+!work        - Làm việc kiếm tiền (cooldown 20 phút)
+!daily       - Nhận quà hằng ngày
+!dice        - Chơi xúc xắc may rủi
+!slots       - Quay hũ slot machine
+```
+
+### Game phiêu lưu
+
+```
+!fish        - Chiến dịch câu cá
+!mine        - Khai thác hầm mỏ
+```
+
+### Game trí tuệ (cần AI key)
+
+```
+!wordchain   - Nối từ với AI
+!vietking    - Thử thách Vua Tiếng Việt
+```
+
+---
+
+## 🔧 Tùy chỉnh
+
+### Đổi Command Prefix
+
+Mặc định bot dùng `!`. Để đổi sang `?` hay `/`:
+
+```env
+# .env
+COMMAND_PREFIX=?
+```
+
+Sau đó restart bot.
+
+### Thêm Discord Webhook
+
+Để bot gửi notifications qua webhook:
+
+1. Tạo webhook trong Discord channel:
+   - Click vào channel settings (⚙️)
+   - Integrations → Webhooks → New Webhook
+   - Copy Webhook URL
+
+2. Thêm vào `.env`:
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+```
 
 ---
 
@@ -163,60 +220,66 @@ Xem thêm chi tiết trong [DEPLOY.md](DEPLOY.md)
 
 ### Bot không khởi động
 
-**Kiểm tra token:**
+**Kiểm tra:**
 ```bash
 # Xem logs
-docker-compose logs -f
+docker-compose logs -f discord-bot
 
 # Hoặc với Python
-python main.py  # Xem error message
+python main.py
 ```
 
 **Lỗi thường gặp:**
-- `Missing TELEGRAM_TOKEN`: Chưa set token trong .env
-- `Invalid token`: Token sai hoặc hết hạn
-- `Port already in use`: Port 8080 hoặc 8443 đang bị chiếm
+- `Missing DISCORD_TOKEN` → Chưa set token
+- `Invalid token` → Token sai hoặc hết hạn
+- `Privileged intent` → Chưa bật intents trong Developer Portal
 
 ### Bot không trả lời
 
-1. Kiểm tra bot có đang chạy không:
-```bash
-curl http://localhost:8080/health
-# Kết quả: {"status": "ok", "service": "telegram-bot"}
+1. **Kiểm tra bot online chưa**
+   - Bot có tên màu xanh trong server không?
+
+2. **Kiểm tra quyền bot**
+   - Bot có quyền `Read Messages` và `Send Messages` không?
+   - Right-click server → Server Settings → Roles → Xem quyền bot
+
+3. **Kiểm tra prefix**
+   - Mặc định là `!`
+   - Thử `!help` hoặc `!start`
+
+4. **Xem logs**
+   ```bash
+   docker-compose logs -f discord-bot
+   ```
+
+### Port bị chiếm
+
+Nếu port 8080 đã được dùng:
+
+```env
+# .env
+WEBHOOK_PORT=8081
 ```
 
-2. Kiểm tra logs:
-```bash
-docker-compose logs -f telegram-bot
-```
-
-3. Thử `/start` lại trong Telegram
-
-### Data bị mất
-
-Đảm bảo volume được mount đúng:
-```yaml
-# docker-compose.yml
-volumes:
-  - ./data:/app/data  # ✅ Đúng
-```
+Restart bot.
 
 ---
 
-## 📚 Tài liệu đầy đủ
+## 📊 Commands Overview
 
-- [README.md](README.md) - Hướng dẫn chi tiết
-- [DEPLOY.md](DEPLOY.md) - Deploy lên nhiều platform
-- [Telegram Bot API](https://core.telegram.org/bots/api)
-
----
-
-## 💡 Tips
-
-1. **Backup data**: File `data/users.json` chứa toàn bộ dữ liệu người chơi
-2. **Monitor bot**: Dùng health endpoint `/health` để kiểm tra
-3. **Logs**: Luôn kiểm tra logs khi có lỗi
-4. **Update code**: `git pull` và rebuild Docker image
+| Command | Mô tả | Cooldown |
+|---------|-------|----------|
+| `!start` | Welcome message | - |
+| `!help` | Danh sách lệnh | - |
+| `!balance` | Xem số dư | - |
+| `!work` | Làm việc kiếm tiền | 20 phút |
+| `!daily` | Nhận quà | 20 giờ |
+| `!dice` | Xúc xắc | - |
+| `!slots` | Quay hũ | - |
+| `!fish` | Câu cá | - |
+| `!mine` | Khai mỏ | - |
+| `!wordchain` | Nối từ AI | - |
+| `!vietking` | Vua TV | - |
 
 ---
 
@@ -224,4 +287,9 @@ volumes:
 
 Bot của bạn giờ đã sẵn sàng! Hãy thử các game và tận hưởng nhé! 🚀
 
-Cần trợ giúp? Mở issue trên GitHub hoặc xem [DEPLOY.md](DEPLOY.md) để biết thêm chi tiết.
+**Tips:**
+- Dùng `!daily` mỗi ngày để tăng streak bonus
+- Dùng `!work` mỗi 20 phút để kiếm tiền
+- `!fish` và `!mine` có thể cho jackpot lớn!
+
+Cần trợ giúp? Xem [README.md](README.md) để biết thêm chi tiết!
