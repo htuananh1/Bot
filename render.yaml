@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: discord-game-bot
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
+      - key: AI_GATEWAY_API_KEY
+        sync: false
+      - key: DATA_PATH
+        value: /app/data/users.json
+      - key: WEBHOOK_PORT
+        value: "8080"
+      - key: WEBHOOK_PATH
+        value: /discord-webhook
+      - key: COMMAND_PREFIX
+        value: "!"
+    disk:
+      name: discord-bot-data
+      mountPath: /app/data
+      sizeGB: 1
+    healthCheckPath: /health
