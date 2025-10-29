@@ -16,6 +16,10 @@ class BotConfig:
 
     token: str
     data_path: str = "bot/data/users.json"
+    webhook_enabled: bool = False
+    webhook_url: str = ""
+    webhook_port: int = 8443
+    webhook_path: str = "/webhook"
 
 
 def load_config() -> BotConfig:
@@ -29,4 +33,22 @@ def load_config() -> BotConfig:
         )
 
     data_path = os.getenv("DATA_PATH", "bot/data/users.json")
-    return BotConfig(token=token, data_path=data_path)
+    webhook_enabled = os.getenv("WEBHOOK_ENABLED", "false").lower() in ("true", "1", "yes")
+    webhook_url = os.getenv("WEBHOOK_URL", "")
+    webhook_port = int(os.getenv("WEBHOOK_PORT", "8443"))
+    webhook_path = os.getenv("WEBHOOK_PATH", "/webhook")
+    
+    if webhook_enabled and not webhook_url:
+        raise ConfigError(
+            "WEBHOOK_ENABLED is true but WEBHOOK_URL is not set. "
+            "Please provide the full webhook URL (e.g., https://yourdomain.com)."
+        )
+    
+    return BotConfig(
+        token=token,
+        data_path=data_path,
+        webhook_enabled=webhook_enabled,
+        webhook_url=webhook_url,
+        webhook_port=webhook_port,
+        webhook_path=webhook_path,
+    )

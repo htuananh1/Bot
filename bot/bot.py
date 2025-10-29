@@ -18,6 +18,7 @@ from telegram.ext import (
 
 from .config import BotConfig, ConfigError, load_config
 from .games import GameEngine, GameError, LanguageOracle
+from .health import start_health_server
 from .storage import UserStore
 
 
@@ -190,6 +191,9 @@ def main(language_oracle: LanguageOracle | None = None) -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         level=logging.INFO,
     )
+    
+    # Start health check server for monitoring
+    start_health_server(port=8080)
 
     try:
         config = load_config()
@@ -198,8 +202,34 @@ def main(language_oracle: LanguageOracle | None = None) -> None:
         raise SystemExit(1) from error
 
     application = build_application(config, language_oracle=language_oracle)
-    LOGGER.info("Starting bot with data path %s", config.data_path)
-    application.run_polling(close_loop=False)
+    
+    if config.webhook_enabled:
+        LOGGER.info(
+            "Starting bot in webhook mode on port %d with path %s",
+            config.webhook_port,
+            config.webhook_path,
+        )
+        try:
+            application.run_webhook(
+                listen="0.0.0.0",
+                port=config.webhook_port,
+                url_path=config.webhook_path,
+                webhook_url=f"{config.webhook_url}{config.webhook_path}",
+                allowed_updates=Update.ALL_TYPES,
+            )
+        except Exception as error:
+            LOGGER.error("Webhook server failed to start: %s", error)
+            raise SystemExit(1) from error
+    else:
+        LOGGER.info("Starting bot in polling mode with data path %s", config.data_path)
+        try:
+            application.run_polling(
+                allowed_updates=Update.ALL_TYPES,
+                close_loop=False,
+            )
+        except Exception as error:
+            LOGGER.error("Polling failed: %s", error)
+            raise SystemExit(1) from error
 
 
 if __name__ == "__main__":
