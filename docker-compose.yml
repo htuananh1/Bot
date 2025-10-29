@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  bot:
+    build: .
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+      DATA_PATH: /data/users.json
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+    volumes:
+      - bot_data:/data
+    restart: unless-stopped
+
+volumes:
+  bot_data:
+    driver: local
